@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misskey メッセージ送信ツール</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3e9f3;
+            color: #5c4b8b;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 320px; /* コンテナの幅を広げる */
+            text-align: center;
+            box-sizing: border-box; /* ボックスモデルを変更 */
+        }
+        h1 {
+            color: #5c4b8b;
+            margin-bottom: 20px;
+        }
+        input,
+        button {
+            width: 100%;
+            padding: 8px; /* パディングを減らす */
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            box-sizing: border-box; /* ボックスモデルを変更 */
+        }
+        button {
+            background-color: #5c4b8b;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4a3b6e;
+        }
+        #status {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Misskey メッセージ送信</h1>
+        <form id="messageForm">
+            <input type="text" id="server" placeholder="サーバーURL" required>
+            <input type="text" id="token" placeholder="アクセストークン" required>
+            <input type="text" id="message" placeholder="メッセージ" required>
+            <input type="number" id="count" placeholder="送信回数" min="1" required>
+            <button type="submit">送信</button>
+        </form>
+        <div id="status"></div>
+    </div>
+    <script>
+        document.getElementById('messageForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const server = document.getElementById('server').value;
+            const token = document.getElementById('token').value;
+            const message = document.getElementById('message').value;
+            const count = parseInt(document.getElementById('count').value);
+            const status = document.getElementById('status');
+            status.textContent = 'メッセージ送信中...';
+            try {
+                const url = `${server}/api/notes/create`;
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+                for (let i = 0; i < count; i++) {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify({ text: message })
+                    });
+                    if (response.ok) {
+                        status.textContent = `メッセージ ${i + 1} 件目が送信されました`;
+                    } else {
+                        status.textContent = `エラーが発生しました: ${response.statusText}`;
+                        break;
+                    }
+                }
+            } catch (error) {
+                status.textContent = `エラーが発生しました: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
