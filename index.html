@@ -76,14 +76,13 @@
             try {
                 const url = `${server}/api/notes/create`;
                 const headers = {
-                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 };
                 for (let i = 0; i < count; i++) {
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: headers,
-                        body: JSON.stringify({ text: message })
+                        body: JSON.stringify({ i: token, text: message })
                     });
                     if (response.ok) {
                         status.textContent = `メッセージ ${i + 1} 件目が送信されました`;
