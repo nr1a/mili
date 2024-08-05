@@ -30,7 +30,8 @@
             margin-bottom: 20px;
         }
         input,
-        button {
+        button,
+        select {
             width: 100%;
             padding: 8px; /* パディングを減らす */
             margin: 10px 0;
@@ -60,6 +61,11 @@
             <input type="text" id="token" placeholder="アクセストークン" required>
             <input type="text" id="message" placeholder="メッセージ" required>
             <input type="number" id="count" placeholder="送信回数" min="1" required>
+            <select id="visibility" required>
+                <option value="public">public</option>
+                <option value="home">home</option>
+                <option value="followers">followers</option>
+            </select>
             <button type="submit">送信</button>
         </form>
         <div id="status"></div>
@@ -71,6 +77,7 @@
             const token = document.getElementById('token').value;
             const message = document.getElementById('message').value;
             const count = parseInt(document.getElementById('count').value);
+            const visibility = document.getElementById('visibility').value;
             const status = document.getElementById('status');
             status.textContent = 'メッセージ送信中...';
             try {
@@ -82,7 +89,7 @@
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: headers,
-                        body: JSON.stringify({ i: token, text: message })
+                        body: JSON.stringify({ i: token, text: message, visibility: visibility })
                     });
                     if (response.ok) {
                         status.textContent = `メッセージ ${i + 1} 件目が送信されました`;
